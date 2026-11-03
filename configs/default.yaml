@@ -1,0 +1,57 @@
+# Default RefCompose Configuration (Paper Section 3 & Section 4)
+model:
+  flux2_repo_id: "black-forest-labs/FLUX.2-dev"
+  grounding_dino_repo_id: "IDEA-Research/grounding-dino-base"
+  depth_anything3_repo_id: "depth-anything/da3-large"
+  depth_fallback_repo_id: "depth-anything/Depth-Anything-V2-Large-hf"
+  qwen3_vl_repo_id: "Qwen/Qwen3-VL-8B-Instruct"
+  dino_repo_id: "facebook/dino-vitb16"
+  clip_repo_id: "openai/clip-vit-large-patch14"
+  pickscore_repo_id: "yuvalkirstain/PickScore_v1"
+  pickscore_clip_repo_id: "laion/CLIP-ViT-H-14-laion2B-s32B-b79K"
+  dtype: "bfloat16"
+  enable_cpu_offload: false
+
+resolution:
+  width: 1280
+  height: 720
+  vae_scale_factor: 8
+  patch_size: 2
+
+lora:
+  rank: 32
+  alpha: 32.0
+  dropout: 0.0
+  inject_double_blocks: true
+  inject_single_blocks: false
+  target_projections:
+    - "to_q"
+    - "to_k"
+    - "to_v"
+    - "to_out.0"
+  # Subject/Appearance LoRA is ordered before Depth/Structure LoRA at inference (Section 4.3)
+  stream_order:
+    - "appearance"
+    - "structure"
+  use_causal_mask: true
+  use_kv_cache: true
+  structure_scale: 1.0
+  appearance_scale: 1.0
+
+sampling:
+  num_inference_steps: 40
+  layout_inference_steps: 40
+  guidance_scale: 4.0
+  seed: 42
+
+detection:
+  box_threshold: 0.25
+  text_threshold: 0.20
+  iou_nms_threshold: 0.50
+  fallback_layout_on_miss: true
+
+canvas:
+  background_value: 0.0  # Black canvas in [0, 1] pixel space
+  interpolation: "bicubic"
+  feather_border_px: 0
+

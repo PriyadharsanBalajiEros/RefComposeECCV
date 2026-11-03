@@ -1,0 +1,59 @@
+# RefCompose 3-Stage DSA LoRA Training Configuration (Section 4.3)
+base_config: "configs/default.yaml"
+
+training:
+  output_dir: "./outputs/checkpoints/refcompose_dsa_lora"
+  logging_dir: "./outputs/logs"
+  seed: 42
+  mixed_precision: "bf16"
+  gradient_checkpointing: true
+
+  # Total 50,000 iterations at 1280x720 across 3 curriculum stages (Section 4.3)
+  max_train_steps: 50000
+  batch_size: 1
+  gradient_accumulation_steps: 4
+  num_workers: 4
+
+  # Optimizer & LR Schedule
+  learning_rate: 1.0e-4
+  weight_decay: 1.0e-2
+  adam_beta1: 0.9
+  adam_beta2: 0.999
+  adam_epsilon: 1.0e-8
+  max_grad_norm: 1.0
+  lr_scheduler: "cosine"
+  lr_warmup_steps: 1000
+
+  # Flow-matching timestep sampling: "uniform" (Eq. 12: t ~ U[0, 1]) or "logit_normal"
+  timestep_sampling: "uniform"
+
+  # 3-Stage Curriculum Boundaries (Section 4.3)
+  curriculum:
+    stage1_end_step: 10000   # Stage 1 (0 - 10k): Depth + black canvas (structure warm-up)
+    stage2_end_step: 30000   # Stage 2 (10k - 30k): Clean Grounding DINO boxes on GT image
+    stage3_end_step: 50000   # Stage 3 (30k - 50k): Photometric jitter + spatial affine warps/translations
+
+  # Stage 3 Perturbation Hyperparameters
+  augmentations:
+    brightness_jitter: 0.15
+    contrast_jitter: 0.15
+    saturation_jitter: 0.15
+    hue_jitter: 0.04
+    max_rotation_deg: 5.0
+    max_shear_deg: 3.0
+    scale_range: [0.95, 1.05]
+    max_box_translate_frac: 0.05
+    perturbation_prob: 0.85
+
+  # Checkpointing & Validation
+  save_every_steps: 2500
+  log_every_steps: 50
+  val_every_steps: 2500
+  resume_from_checkpoint: null
+
+data:
+  cinematic_manifest: "./data/processed/cinematic_manifest.jsonl"
+  synthetic_manifest: "./data/processed/synthetic_manifest.jsonl"
+  cinematic_ratio: 0.50  # 50% private cinematic / 50% synthetic FLUX.2 (Section 4.1)
+  use_cached_latents: false
+

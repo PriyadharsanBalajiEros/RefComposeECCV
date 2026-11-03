@@ -1,0 +1,20 @@
+# Peak GPU Memory (GB) Benchmark Configuration (Section 4.4, Table 1)
+base_config: "configs/default.yaml"
+
+memory_benchmark:
+  output_dir: "./outputs/benchmark_memory"
+  batch_size: 1
+  width: 1280
+  height: 720
+  num_inference_steps: 40
+  warmup_runs: 1
+  timed_runs: 3
+  reference_counts: [2, 4, 6, 8, 12, 15]
+  table1_reference_counts: [2, 4, 6]
+  methods:
+    - "creatilayout"
+    - "instanceassemble"
+    - "uno"
+    - "xverse"
+    - "refcompose"
+

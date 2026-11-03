@@ -1,0 +1,43 @@
+# RefCompose Quantitative Evaluation Config on DenseLayout (Section 4.4, Table 2)
+base_config: "configs/default.yaml"
+
+evaluation:
+  benchmark_name: "DenseLayout"
+  denselayout_dataset_id: "FireRedTeam/DenseLayout"
+  layoutsam_eval_dataset_id: "HuiZhang0812/LayoutSAM-eval"
+  local_benchmark_dir: "./data/benchmarks/denselayout_test"
+  canonical_cache_dir: "./data/benchmarks/denselayout_canonical_cache"
+  output_dir: "./outputs/eval_denselayout"
+
+  # DenseLayout test split has 5,000 held-out composites (~8.3 objects/image)
+  num_eval_samples: 5000
+  split: "test"
+
+  # Reference count regimes in Table 2:
+  # 1) Standard fair comparison cap (UNO/XVerse OOM at N=6 on 1x H100 80GB): N = 5 largest GT boxes by area
+  # 2) Scalability regime (RefCompose N>5): per-image annotation count capped at N = 15
+  baseline_max_refs: 5
+  scalable_max_refs: 15
+
+  # Canonicalize GT crops via FLUX.2 Dev so identity is reconstructed rather than pixel-copied (Section 4.4)
+  canonicalize_gt_crops: true
+
+  # Region-wise evaluation mode: "hybrid" (GroundingDINO + Qwen3-VL VQA + visual features) or "feature_only"
+  region_eval_mode: "hybrid"
+
+  # Methods to evaluate
+  methods:
+    - "refcompose_n5"
+    - "refcompose_n_gt_5"
+    - "creatilayout"
+    - "instanceassemble"
+    - "uno"
+    - "xverse"
+
+  checkpoints:
+    refcompose_lora_dir: "./outputs/checkpoints/refcompose_dsa_lora/final"
+    creatilayout_repo_id: "HuiZhang0812/CreatiLayout"
+    instanceassemble_repo_id: "FireRedTeam/InstanceAssemble"
+    uno_repo_id: "bytedance-research/UNO"
+    xverse_repo_id: "ByteDance/XVerse"
+

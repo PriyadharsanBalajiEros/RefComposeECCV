@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "refcompose"
+version = "1.0.0"
+description = "RefCompose: Multi-Reference Image Generation via LoRA-Conditioned Diffusion"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "Sai Sri Teja Kuppa" },
+    { name = "Parth Shinde" },
+    { name = "Priyadharsan Balaji S" },
+    { name = "Jinka Harshavardhan" },
+    { name = "Sriprabha Ramanarayanan" },
+]
+keywords = ["diffusion-models", "multi-reference", "lora", "flux2", "easycontrol", "image-generation"]
+dependencies = [
+    "torch>=2.2.0",
+    "torchvision>=0.17.0",
+    "diffusers>=0.32.0",
+    "transformers>=4.48.0",
+    "accelerate>=1.2.0",
+    "safetensors>=0.4.5",
+    "peft>=0.14.0",
+    "datasets>=3.0.0",
+    "pillow>=10.0.0",
+    "numpy>=1.26.0",
+    "scipy>=1.12.0",
+    "opencv-python>=4.9.0",
+    "pyyaml>=6.0.1",
+    "tqdm>=4.66.0",
+    "einops>=0.8.0",
+]
+
+[project.optional-dependencies]
+depth_anything_3 = [
+    "depth-anything-3 @ git+https://github.com/ByteDance-Seed/Depth-Anything-3.git",
+]
+dev = [
+    "pytest>=8.0.0",
+]
+
+[project.scripts]
+refcompose-prepare-data = "scripts.prepare_dataset:main"
+refcompose-train = "scripts.train:main"
+refcompose-infer = "scripts.infer:main"
+refcompose-eval = "scripts.evaluate:main"
+refcompose-bench-memory = "scripts.benchmark_memory:main"
+refcompose-ablations = "scripts.run_ablations:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["refcompose*", "scripts*"]
+

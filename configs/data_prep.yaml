@@ -1,0 +1,27 @@
+# RefCompose 5-Stage Dataset Construction Configuration (Section 4.1 & Figure 3)
+base_config: "configs/default.yaml"
+
+curation:
+  raw_cinematic_dir: "./data/raw/cinematic_frames"
+  synthetic_output_dir: "./data/raw/synthetic_flux2"
+  processed_output_dir: "./data/processed"
+
+  # Target corpus scale (Section 4.1: ~50,000 cinematic + 50,000 synthetic, 50%/50% split)
+  target_cinematic_samples: 50000
+  target_synthetic_samples: 50000
+
+  # Stage 2: Compositional density filter (Section 4.1: retain only shots with > 4 detections)
+  min_detections_exclusive: 4
+
+  # Stage 3: FLUX.2 Dev canonicalization settings
+  canonical_resolution: [1024, 1024]
+  canonical_steps: 28
+  canonical_guidance_scale: 3.5
+  canonical_prompt_template: >-
+    A studio product/subject photograph of {object_description} in a neutral front-facing pose,
+    centered on a plain neutral light-gray studio background, uniform soft diffused lighting,
+    no harsh shadows, preserving exact colors, textures, materials, and identity details.
+
+  # Stage 4: DINO cosine similarity threshold (Section 4.1: retain only if similarity > 0.90)
+  dino_similarity_threshold: 0.90
+
